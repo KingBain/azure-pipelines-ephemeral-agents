@@ -12,12 +12,12 @@ This technique relies on three components
 
 1. Create the docker image with pipeline agent A docker image(with Azure Pipelines agent).
 1. Create/configure a container, to run the docker image.
-1. The pipeline job (and **only** one) runs the container, does its deployment work, unregisters the agent and deletes the container(self destruct).
+1. The pipeline job runs the container, does its deployment work, unregisters the agent and deletes the container(self destruct).
+
+![image](https://user-images.githubusercontent.com/367922/165759593-765b2bba-4379-474b-83ca-1df4b7e9fc28.png)
 
 
-![virtual network](virtualnetworks.png)
-
-Your pipelines have to be structured the following way. It has (at least) two jobs:
+Your pipelines have to be structured the following way.:
 
 * The first job uses this task and provisions and configures an ephemeral agent in a specific pool of your choice.
 * The second job (runs **after** the first one has finished) does the actual deployment. It runs on the pool in which the first job registered the agent (after the job is executed the agent self destructs)
@@ -43,12 +43,6 @@ You can opt to build the extension yourself (and publish on the marketplace as a
 The task works in symbiosis with the agent docker image to make sure the agent is registered, only runs one job and the container is deleted after the job is finished.
 
 Learn [how to use the extension](Extension/overview.md)
-
-### Publishing the extension
-
-The provided pipeline task is packaged as an Azure DevOps Extension. To publish the extension, you need to have a publisher and change the manifest to include your publisher id.
-
-Read all the necessary steps in [Develop a web extension for Azure DevOps Services](https://docs.microsoft.com/en-us/azure/devops/extend/get-started/node?view=azure-devops)
 
 ## Requirements
 
