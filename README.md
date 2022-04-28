@@ -2,23 +2,18 @@
 
 When you want to deploy to Azure Resources that aren't exposed on the internet, and only accessible via a [private network](https://docs.microsoft.com/en-us/azure/virtual-network/virtual-networks-overview) you are excluded from using [Microsoft-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/hosted?view=azure-devops), and you need to maintain your pool of [self-hosted agents](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/agents?view=azure-devops#install).
 
-Ephemeral pipelines agent eliminates the need to maintain self-hosted agents (for **deployment** purposes) and still be capable of deploying to private azure resources. Ephemeral pipeline agents run in an Azure Container Instance (no public IP address and access to the private network) which are created on a needed basis to run a single a pipeline job.
+Ephemeral pipelines agent eliminates the need to maintain self-hosted agents (for **deployment** purposes) and still be capable of deploying to private azure resources. Ephemeral agents run in an Azure Container Instance (no public IP address and access to the private network only) which are created on a needed basis.
 
 This repo has several components that allow deployments to private virtual networks using short-lived agents and without having to maintain a permanent pool of self-hosted agents.
 
-The purpose of this task is to create a short-lived Azure Pipelines Agent to run a deploy in a private virtual network so you can deploy assets to Azure Resources that are not internet accessible.
-
-This way, you can deploy to private Azure resources without having to expose them on the internet or having to maintain self-hosted agents on the same (or with access) virtual network.
-
 ## How it works
 
-This technique relies on three requirements
+This technique relies on three components
 
-1. A docker image that can run an Azure Pipelines agent in a container
-1. Provision, an ephemeral agent, to run a deployment job (once)
-    * While this can be done manually with a task, we have created a task that provisions, configures and registers an agent on a [Azure Container Instance](https://azure.microsoft.com/services/container-instances/). The task works in symbiosis with the docker image.
-1. The container runs a single pipeline job (and **only** one), unregisters the agent and deletes the container.
-    * While an external component can do this, we have delegated the operation to the container. It can self destruct to eliminate moving parts and external components.
+1. Create the docker image with pipeline agent A docker image(with Azure Pipelines agent).
+1. Create/configure a container, to run the docker image.
+1. The pipeline job (and **only** one) runs the container, does its deployment work, unregisters the agent and deletes the container(self destruct).
+
 
 ![virtual network](virtualnetworks.png)
 
